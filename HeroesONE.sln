@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesONE", "HeroesONE\HeroesONE.csproj", "{5BC732BD-9A6A-471A-8743-465CF27AC646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesONELib", "HeroesONELib\HeroesONELib.csproj", "{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BC732BD-9A6A-471A-8743-465CF27AC646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BC732BD-9A6A-471A-8743-465CF27AC646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BC732BD-9A6A-471A-8743-465CF27AC646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BC732BD-9A6A-471A-8743-465CF27AC646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

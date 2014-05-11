@@ -1,0 +1,8 @@
+Arguments:
+
+-h, --help                          Show this help.
+-u, --unpack filename [destination] Extracts filename to destination, or the
+                                    current directory.
+-p, --pack filenames destination    Packs files into the destination archive.
+-n, --no-compress                   Does not compress or decompress files in
+                                    the archive.
