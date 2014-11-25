@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesONE", "HeroesONE\Hero
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesONELib", "HeroesONELib\HeroesONELib.csproj", "{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesONEEdit", "HeroesONEEdit\HeroesONEEdit.csproj", "{9660D1DB-6AAC-4039-AD9E-A7F5A63C7037}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E22CAE2D-3ECD-4DC3-B0A1-7812E830E243}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9660D1DB-6AAC-4039-AD9E-A7F5A63C7037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9660D1DB-6AAC-4039-AD9E-A7F5A63C7037}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9660D1DB-6AAC-4039-AD9E-A7F5A63C7037}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9660D1DB-6AAC-4039-AD9E-A7F5A63C7037}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
