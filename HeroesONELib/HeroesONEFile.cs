@@ -90,7 +90,7 @@ namespace HeroesONELib
                     writer.Write(item.Data.Length);
                     writer.Write(Magic);
                     writer.Write(item.Data);
-                    System.Text.Encoding.ASCII.GetBytes(item.Name).CopyTo(filenames, i * 64);
+                    System.Text.Encoding.ASCII.GetBytes(item.Name).CopyTo(filenames, (i - 1) * 64);
                 }
                 stream.Seek(fnpos, SeekOrigin.Begin);
                 writer.Write(filenames);
