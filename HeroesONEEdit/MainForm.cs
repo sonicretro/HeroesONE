@@ -81,10 +81,14 @@ namespace HeroesONEEdit
 
         private void extractAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog a = new FolderBrowserDialog() { ShowNewFolderButton = true };
-            if (a.ShowDialog(this) == DialogResult.OK)
-                foreach (HeroesONEFile.File item in file.Files)
-                    File.WriteAllBytes(Path.Combine(a.SelectedPath, item.Name), Prs.Decompress(item.Data));
+			using (FolderBrowserDialog a = new FolderBrowserDialog() { ShowNewFolderButton = true })
+			{
+				if (filename != null)
+					a.SelectedPath = Path.GetDirectoryName(filename);
+				if (a.ShowDialog(this) == DialogResult.OK)
+					foreach (HeroesONEFile.File item in file.Files)
+						File.WriteAllBytes(Path.Combine(a.SelectedPath, item.Name), Prs.Decompress(item.Data));
+			}
         }
 
         ListViewItem selectedItem;
@@ -98,84 +102,74 @@ namespace HeroesONEEdit
             }
         }
 
-        private void addFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog a = new OpenFileDialog()
-            {
-                Filter = "All Files|*.*",
-                Multiselect = true
-            };
-            if (a.ShowDialog() == DialogResult.OK)
-            {
-                int i = file.Files.Count;
-                foreach (string item in a.FileNames)
-                {
-                    file.Files.Add(new HeroesONEFile.File(item));
-					file.Files[i].Data = Prs.Compress(file.Files[i].Data);
-                    imageList1.Images.Add(GetIcon(file.Files[i].Name));
-                    listView1.Items.Add(file.Files[i].Name, i);
-                    i++;
-                }
-            }
-        }
+		private void addFilesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog a = new OpenFileDialog()
+			{
+				Filter = "All Files|*.*",
+				Multiselect = true
+			})
+				if (a.ShowDialog() == DialogResult.OK)
+					AddFiles(a.FileNames);
+		}
 
-        private void extractToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (selectedItem == null) return;
-            SaveFileDialog a = new SaveFileDialog()
-            {
-                Filter = "All Files|*.*",
-                FileName = selectedItem.Text
-            };
-            if (a.ShowDialog() == DialogResult.OK)
-                File.WriteAllBytes(a.FileName, Prs.Decompress(file.Files[listView1.Items.IndexOf(selectedItem)].Data));
-        }
+		private void extractToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (selectedItem == null) return;
+			using (SaveFileDialog a = new SaveFileDialog()
+			{
+				Filter = "All Files|*.*",
+				FileName = selectedItem.Text
+			})
+				if (a.ShowDialog() == DialogResult.OK)
+					File.WriteAllBytes(a.FileName, Prs.Decompress(file.Files[listView1.Items.IndexOf(selectedItem)].Data));
+		}
 
         private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (selectedItem == null) return;
             int i = listView1.Items.IndexOf(selectedItem);
             string fn = file.Files[i].Name;
-            OpenFileDialog a = new OpenFileDialog()
+            using (OpenFileDialog a = new OpenFileDialog()
             {
                 Filter = "All Files|*.*",
                 FileName = fn
-            };
-            if (a.ShowDialog() == DialogResult.OK)
-            {
-                file.Files[i] = new HeroesONEFile.File(a.FileName);
-				file.Files[i].Data = Prs.Compress(file.Files[i].Data);
-                file.Files[i].Name = fn;
-            }
+            })
+				if (a.ShowDialog() == DialogResult.OK)
+				{
+					file.Files[i] = new HeroesONEFile.File(a.FileName);
+					file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+					file.Files[i].Name = fn;
+				}
         }
 
         private void insertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (selectedItem == null) return;
-            OpenFileDialog a = new OpenFileDialog()
+            using (OpenFileDialog a = new OpenFileDialog()
             {
                 Filter = "All Files|*.*",
                 Multiselect = true
-            };
-            if (a.ShowDialog() == DialogResult.OK)
-            {
-                int i = listView1.Items.IndexOf(selectedItem);
-                foreach (string item in a.FileNames)
-                {
-                    file.Files.Insert(i, new HeroesONEFile.File(item));
-					file.Files[i].Data = Prs.Compress(file.Files[i].Data);
-                    i++;
-                }
-                listView1.Items.Clear();
-                imageList1.Images.Clear();
-                listView1.BeginUpdate();
-                for (int j = 0; j < file.Files.Count; j++)
-                {
-                    imageList1.Images.Add(GetIcon(file.Files[j].Name));
-                    listView1.Items.Add(file.Files[j].Name, j);
-                }
-                listView1.EndUpdate();
-            }
+            })
+				if (a.ShowDialog() == DialogResult.OK)
+				{
+					int i = listView1.Items.IndexOf(selectedItem);
+					foreach (string item in a.FileNames)
+					{
+						file.Files.Insert(i, new HeroesONEFile.File(item));
+						file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+						i++;
+					}
+					listView1.Items.Clear();
+					imageList1.Images.Clear();
+					listView1.BeginUpdate();
+					for (int j = 0; j < file.Files.Count; j++)
+					{
+						imageList1.Images.Add(GetIcon(file.Files[j].Name));
+						listView1.Items.Add(file.Files[j].Name, j);
+					}
+					listView1.EndUpdate();
+				}
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -237,28 +231,30 @@ namespace HeroesONEEdit
         private void listView1_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] dropfiles = (string[])e.Data.GetData(DataFormats.FileDrop, true);
-                int i = file.Files.Count;
-                foreach (string item in dropfiles)
-                {
-                    bool found = false;
-                    for (int j = 0; j < file.Files.Count; j++)
-                        if (file.Files[j].Name.Equals(Path.GetFileName(item), StringComparison.OrdinalIgnoreCase))
-                        {
-                            found = true;
-                            file.Files[j] = new HeroesONEFile.File(item);
-							file.Files[j].Data = Prs.Compress(file.Files[j].Data);
-                        }
-                    if (found) continue;
-                    file.Files.Add(new HeroesONEFile.File(item));
-					file.Files[i].Data = Prs.Compress(file.Files[i].Data);
-                    imageList1.Images.Add(GetIcon(file.Files[i].Name));
-                    listView1.Items.Add(file.Files[i].Name, i);
-                    i++;
-                }
-            }
+				AddFiles((string[])e.Data.GetData(DataFormats.FileDrop, true));
         }
+
+		private void AddFiles(string[] files)
+		{
+			int i = file.Files.Count;
+			foreach (string item in files)
+			{
+				bool found = false;
+				for (int j = 0; j < file.Files.Count; j++)
+					if (file.Files[j].Name.Equals(Path.GetFileName(item), StringComparison.OrdinalIgnoreCase))
+					{
+						found = true;
+						file.Files[j] = new HeroesONEFile.File(item);
+						file.Files[j].Data = Prs.Compress(file.Files[j].Data);
+					}
+				if (found) continue;
+				file.Files.Add(new HeroesONEFile.File(item));
+				file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+				imageList1.Images.Add(GetIcon(file.Files[i].Name));
+				listView1.Items.Add(file.Files[i].Name, i);
+				i++;
+			}
+		}
 
         private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
         {
