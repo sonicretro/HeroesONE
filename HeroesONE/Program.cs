@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using FraGag.Compression;
 using HeroesONELib;
 
 namespace HeroesONE
@@ -9,9 +8,9 @@ namespace HeroesONE
     {
 		static LongOpt[] opts = {
 							 new LongOpt("help", Argument.No, null, 'h'),
-							 new LongOpt("no-compression", Argument.No, null, 'n'),
 							 new LongOpt("pack", Argument.No, null, 'p'),
-							 new LongOpt("unpack", Argument.No, null, 'u')
+							 new LongOpt("unpack", Argument.No, null, 'u'),
+							 new LongOpt("shadow", Argument.No, null, 's')
 						 };
 
         /// <summary>
@@ -19,9 +18,9 @@ namespace HeroesONE
         /// </summary>
         static void Main(string[] args)
         {
-			Getopt getopt = new Getopt("KensSharp", args, Getopt.digest(opts), opts);
+			Getopt getopt = new Getopt("HeroesONE", args, Getopt.digest(opts), opts);
 			Mode? mode = null;
-			bool compress = true;
+			bool shadow = false;
 			int opt = getopt.getopt();
 			while (opt != -1)
 			{
@@ -36,8 +35,8 @@ namespace HeroesONE
 					case 'u':
 						mode = Mode.Unpack;
 						break;
-					case 'n':
-						compress = false;
+					case 's':
+						shadow = true;
 						break;
 				}
 				opt = getopt.getopt();
@@ -61,10 +60,7 @@ namespace HeroesONE
                             Directory.CreateDirectory(dest);
                         }
 						foreach (HeroesONEFile.File item in one.Files)
-							if (!compress)
-								File.WriteAllBytes(Path.Combine(dest, item.Name), item.Data);
-							else
-								File.WriteAllBytes(Path.Combine(dest, item.Name), Prs.Decompress(item.Data));
+							File.WriteAllBytes(Path.Combine(dest, item.Name), item.Data);
 					}
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     break;
@@ -75,7 +71,7 @@ namespace HeroesONE
                         HeroesONEFile ar = new HeroesONEFile();
                         for (int i = getopt.Optind; i < args.Length - 1; i++)
                             ar.Files.Add(new HeroesONEFile.File(args[i]));
-                        ar.Save(fn);
+                        ar.Save(fn, shadow);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     break;

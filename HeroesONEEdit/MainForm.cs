@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using HeroesONELib;
-using FraGag.Compression;
 
 namespace HeroesONEEdit
 {
@@ -29,15 +28,20 @@ namespace HeroesONEEdit
 
         private void LoadFile(string filename)
         {
-            try
+#if !DEBUG
+			try
             {
+#endif
                 file = new HeroesONEFile(filename);
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message);
                 return;
             }
+#endif
+			shadowModeToolStripMenuItem.Checked = file.IsShadow;
             this.filename = filename;
             listView1.Items.Clear();
             imageList1.Images.Clear();
@@ -66,7 +70,7 @@ namespace HeroesONEEdit
             if (string.IsNullOrEmpty(filename))
                 saveAsToolStripMenuItem_Click(sender, e);
             else
-                file.Save(filename);
+                file.Save(filename, shadowModeToolStripMenuItem.Checked);
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -74,7 +78,7 @@ namespace HeroesONEEdit
             using (SaveFileDialog a = new SaveFileDialog() { Filter = "ONE Files|*.one|All Files|*.*" })
                 if (a.ShowDialog() == DialogResult.OK)
                 {
-                    file.Save(a.FileName);
+                    file.Save(a.FileName, shadowModeToolStripMenuItem.Checked);
                     this.filename = a.FileName;
                 }
         }
@@ -87,7 +91,7 @@ namespace HeroesONEEdit
 					a.SelectedPath = Path.GetDirectoryName(filename);
 				if (a.ShowDialog(this) == DialogResult.OK)
 					foreach (HeroesONEFile.File item in file.Files)
-						File.WriteAllBytes(Path.Combine(a.SelectedPath, item.Name), Prs.Decompress(item.Data));
+						File.WriteAllBytes(Path.Combine(a.SelectedPath, item.Name), item.Data);
 			}
         }
 
@@ -122,7 +126,7 @@ namespace HeroesONEEdit
 				FileName = selectedItem.Text
 			})
 				if (a.ShowDialog() == DialogResult.OK)
-					File.WriteAllBytes(a.FileName, Prs.Decompress(file.Files[listView1.Items.IndexOf(selectedItem)].Data));
+					File.WriteAllBytes(a.FileName, file.Files[listView1.Items.IndexOf(selectedItem)].Data);
 		}
 
         private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -138,7 +142,7 @@ namespace HeroesONEEdit
 				if (a.ShowDialog() == DialogResult.OK)
 				{
 					file.Files[i] = new HeroesONEFile.File(a.FileName);
-					file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+					file.Files[i].Data = file.Files[i].Data;
 					file.Files[i].Name = fn;
 				}
         }
@@ -157,7 +161,7 @@ namespace HeroesONEEdit
 					foreach (string item in a.FileNames)
 					{
 						file.Files.Insert(i, new HeroesONEFile.File(item));
-						file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+						file.Files[i].Data = file.Files[i].Data;
 						i++;
 					}
 					listView1.Items.Clear();
@@ -212,7 +216,7 @@ namespace HeroesONEEdit
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             string fp = Path.Combine(Path.GetTempPath(), file.Files[listView1.SelectedIndices[0]].Name);
-            File.WriteAllBytes(fp, Prs.Decompress(file.Files[listView1.SelectedIndices[0]].Data));
+            File.WriteAllBytes(fp, file.Files[listView1.SelectedIndices[0]].Data);
             System.Diagnostics.Process.Start(fp);
         }
 
@@ -245,11 +249,11 @@ namespace HeroesONEEdit
 					{
 						found = true;
 						file.Files[j] = new HeroesONEFile.File(item);
-						file.Files[j].Data = Prs.Compress(file.Files[j].Data);
+						file.Files[j].Data = file.Files[j].Data;
 					}
 				if (found) continue;
 				file.Files.Add(new HeroesONEFile.File(item));
-				file.Files[i].Data = Prs.Compress(file.Files[i].Data);
+				file.Files[i].Data = file.Files[i].Data;
 				imageList1.Images.Add(GetIcon(file.Files[i].Name));
 				listView1.Items.Add(file.Files[i].Name, i);
 				i++;
@@ -259,7 +263,7 @@ namespace HeroesONEEdit
         private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
         {
             string fn = Path.Combine(Path.GetTempPath(), file.Files[listView1.SelectedIndices[0]].Name);
-            File.WriteAllBytes(fn, Prs.Decompress(file.Files[listView1.SelectedIndices[0]].Data));
+            File.WriteAllBytes(fn, file.Files[listView1.SelectedIndices[0]].Data);
             DoDragDrop(new DataObject(DataFormats.FileDrop, new string[] { fn }), DragDropEffects.All);
         }
 

@@ -46,6 +46,7 @@
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.shadowModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -69,6 +70,7 @@
             this.extractAllToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
+            this.shadowModeToolStripMenuItem,
             this.toolStripSeparator1,
             this.quitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -193,6 +195,13 @@
 			this.imageList1.ImageSize = new System.Drawing.Size(32, 32);
 			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
+			// shadowModeToolStripMenuItem
+			// 
+			this.shadowModeToolStripMenuItem.CheckOnClick = true;
+			this.shadowModeToolStripMenuItem.Name = "shadowModeToolStripMenuItem";
+			this.shadowModeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.shadowModeToolStripMenuItem.Text = "S&hadow Mode";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -231,6 +240,7 @@
         private System.Windows.Forms.ToolStripMenuItem addFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem shadowModeToolStripMenuItem;
     }
 }
 
