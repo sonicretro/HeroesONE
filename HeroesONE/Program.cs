@@ -10,7 +10,8 @@ namespace HeroesONE
 							 new LongOpt("help", Argument.No, null, 'h'),
 							 new LongOpt("pack", Argument.No, null, 'p'),
 							 new LongOpt("unpack", Argument.No, null, 'u'),
-							 new LongOpt("shadow", Argument.No, null, 's')
+							 new LongOpt("shadow060", Argument.No, null, '6'),
+							 new LongOpt("shadow050", Argument.No, null, '5')
 						 };
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace HeroesONE
         {
 			Getopt getopt = new Getopt("HeroesONE", args, Getopt.digest(opts), opts);
 			Mode? mode = null;
-			bool shadow = false;
+			ArchiveType type = ArchiveType.Heroes;
 			int opt = getopt.getopt();
 			while (opt != -1)
 			{
@@ -35,8 +36,11 @@ namespace HeroesONE
 					case 'u':
 						mode = Mode.Unpack;
 						break;
-					case 's':
-						shadow = true;
+					case '6':
+						type = ArchiveType.Shadow060;
+						break;
+					case '5':
+						type = ArchiveType.Shadow050;
 						break;
 				}
 				opt = getopt.getopt();
@@ -71,7 +75,7 @@ namespace HeroesONE
                         HeroesONEFile ar = new HeroesONEFile();
                         for (int i = getopt.Optind; i < args.Length - 1; i++)
                             ar.Files.Add(new HeroesONEFile.File(args[i]));
-                        ar.Save(fn, shadow);
+                        ar.Save(fn, type);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     break;

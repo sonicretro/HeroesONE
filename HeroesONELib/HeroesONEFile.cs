@@ -31,11 +31,12 @@ namespace HeroesONELib
             }
         }
 
-		public bool IsShadow { get; private set; }
+		public ArchiveType Type { get; private set; }
         public List<File> Files { get; set; }
 
         const int HeroesMagic = 0x1400FFFF;
-		const int ShadowMagic = 0x1C020037;
+		const int Shadow060Magic = 0x1C020037;
+		const int Shadow050Magic = 0x1C020020;
 
         public HeroesONEFile()
         {
@@ -71,10 +72,19 @@ namespace HeroesONELib
 							}
 						}
 						break;
-					case ShadowMagic:
+					case Shadow060Magic:
+					case Shadow050Magic:
 						{
-							IsShadow = true;
-							if (reader.ReadString(12) != "One Ver 0.60") goto default;
+							switch (reader.ReadString(12))
+							{
+								case "One Ver 0.60":
+									Type = ArchiveType.Shadow060;
+									break;
+								case "One Ver 0.50":
+									Type = ArchiveType.Shadow050;
+									break;
+							}
+							if (Type == ArchiveType.Heroes) goto default;
 							stream.Seek(4, SeekOrigin.Current);
 							int fnum = reader.ReadInt32();
 							stream.Seek(0x90, SeekOrigin.Current);
@@ -82,10 +92,12 @@ namespace HeroesONELib
 							List<int> fileaddrs = new List<int>(fnum);
 							for (int i = 0; i < fnum; i++)
 							{
-								filenames.Add(reader.ReadString(0x2C));
+								filenames.Add(reader.ReadString(Type == ArchiveType.Shadow060 ? 0x2C : 0x20));
 								stream.Seek(4, SeekOrigin.Current);
 								fileaddrs.Add(reader.ReadInt32());
 								stream.Seek(4, SeekOrigin.Current);
+								if (Type == ArchiveType.Shadow050)
+									stream.Seek(0xC, SeekOrigin.Current);
 							}
 							fileaddrs.Add(filesize);
 							for (int i = 0; i < fnum; i++)
@@ -101,7 +113,7 @@ namespace HeroesONELib
 			}
         }
 
-        public void Save(string filename, bool shadow)
+        public void Save(string filename, ArchiveType type)
         {
             using (FileStream stream = System.IO.File.Open(filename, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(stream, System.Text.Encoding.ASCII))
@@ -109,7 +121,7 @@ namespace HeroesONELib
                 writer.Write(0);
                 long fspos = stream.Position;
                 writer.Write(-1);
-				if (!shadow)
+				if (type == ArchiveType.Heroes)
 				{
 					byte[] filenames = new byte[256 * 64];
 					writer.Write(HeroesMagic);
@@ -133,8 +145,8 @@ namespace HeroesONELib
 				}
 				else
 				{
-					writer.Write(ShadowMagic);
-					writer.Write("One Ver 0.60", 12);
+					writer.Write(type == ArchiveType.Shadow060 ? Shadow060Magic : Shadow050Magic);
+					writer.Write(type == ArchiveType.Shadow060 ? "One Ver 0.60" : "One Ver 0.50", 12);
 					writer.Write(0);
 					writer.Write(Files.Count);
 					byte[] buf = new byte[0x90];
@@ -144,11 +156,13 @@ namespace HeroesONELib
 					Queue<long> addrpos = new Queue<long>(Files.Count);
 					foreach (File item in Files)
 					{
-						writer.Write(item.Name, 0x2C);
+						writer.Write(item.Name, type == ArchiveType.Shadow060 ? 0x2C : 0x20);
 						writer.Write(item.Data.Length);
 						addrpos.Enqueue(stream.Position);
 						writer.Write(-1);
 						writer.Write(1);
+						if (type == ArchiveType.Shadow050)
+							writer.Write(new byte[0xC]);
 					}
 					foreach (File item in Files)
 					{
@@ -163,6 +177,13 @@ namespace HeroesONELib
             }
         }
     }
+
+	public enum ArchiveType
+	{
+		Heroes,
+		Shadow060,
+		Shadow050
+	}
 
 	public static class Extensions
     {

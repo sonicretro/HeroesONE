@@ -41,7 +41,18 @@ namespace HeroesONEEdit
                 return;
             }
 #endif
-			shadowModeToolStripMenuItem.Checked = file.IsShadow;
+			switch (file.Type)
+			{
+				case ArchiveType.Heroes:
+					heroesToolStripMenuItem_Click(this, EventArgs.Empty);
+					break;
+				case ArchiveType.Shadow060:
+					shadow060ToolStripMenuItem_Click(this, EventArgs.Empty);
+					break;
+				case ArchiveType.Shadow050:
+					shadow050ToolStripMenuItem_Click(this, EventArgs.Empty);
+					break;
+			}
             this.filename = filename;
             listView1.Items.Clear();
             imageList1.Images.Clear();
@@ -70,7 +81,7 @@ namespace HeroesONEEdit
             if (string.IsNullOrEmpty(filename))
                 saveAsToolStripMenuItem_Click(sender, e);
             else
-                file.Save(filename, shadowModeToolStripMenuItem.Checked);
+                file.Save(filename, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,7 +89,7 @@ namespace HeroesONEEdit
             using (SaveFileDialog a = new SaveFileDialog() { Filter = "ONE Files|*.one|All Files|*.*" })
                 if (a.ShowDialog() == DialogResult.OK)
                 {
-                    file.Save(a.FileName, shadowModeToolStripMenuItem.Checked);
+					file.Save(a.FileName, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
                     this.filename = a.FileName;
                 }
         }
@@ -308,5 +319,23 @@ namespace HeroesONEEdit
         {
             Close();
         }
+
+		private void heroesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			heroesToolStripMenuItem.Checked = true;
+			shadow050ToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = false;
+		}
+
+		private void shadow060ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			shadow060ToolStripMenuItem.Checked = true;
+			heroesToolStripMenuItem.Checked = shadow050ToolStripMenuItem.Checked = false;
+		}
+
+		private void shadow050ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			shadow050ToolStripMenuItem.Checked = true;
+			heroesToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = false;
+		}
     }
 }

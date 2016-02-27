@@ -4,5 +4,7 @@ Arguments:
 -u, --unpack filename [destination] Extracts filename to destination, or the
                                     current directory.
 -p, --pack filenames destination    Packs files into the destination archive.
--s, --shadow                        Packs the archive with the "Shadow the
-                                    Hedgehog" format.
+-6, --shadow060                     Packs the archive with the "Shadow the
+                                    Hedgehog" 0.60 format.
+-5, --shadow050                     Packs the archive with the "Shadow the
+                                    Hedgehog" 0.50 format.

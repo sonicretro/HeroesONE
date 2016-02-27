@@ -37,6 +37,10 @@
 			this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.heroesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.shadow060ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.shadow050ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -46,7 +50,6 @@
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.shadowModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -70,7 +73,7 @@
             this.extractAllToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
-            this.shadowModeToolStripMenuItem,
+            this.modeToolStripMenuItem,
             this.toolStripSeparator1,
             this.quitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -118,6 +121,39 @@
 			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveAsToolStripMenuItem.Text = "Save &As...";
 			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+			// 
+			// modeToolStripMenuItem
+			// 
+			this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.heroesToolStripMenuItem,
+            this.shadow060ToolStripMenuItem,
+            this.shadow050ToolStripMenuItem});
+			this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+			this.modeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.modeToolStripMenuItem.Text = "&Mode";
+			// 
+			// heroesToolStripMenuItem
+			// 
+			this.heroesToolStripMenuItem.Checked = true;
+			this.heroesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.heroesToolStripMenuItem.Name = "heroesToolStripMenuItem";
+			this.heroesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.heroesToolStripMenuItem.Text = "&Heroes";
+			this.heroesToolStripMenuItem.Click += new System.EventHandler(this.heroesToolStripMenuItem_Click);
+			// 
+			// shadow060ToolStripMenuItem
+			// 
+			this.shadow060ToolStripMenuItem.Name = "shadow060ToolStripMenuItem";
+			this.shadow060ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.shadow060ToolStripMenuItem.Text = "Shadow 0.&60";
+			this.shadow060ToolStripMenuItem.Click += new System.EventHandler(this.shadow060ToolStripMenuItem_Click);
+			// 
+			// shadow050ToolStripMenuItem
+			// 
+			this.shadow050ToolStripMenuItem.Name = "shadow050ToolStripMenuItem";
+			this.shadow050ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.shadow050ToolStripMenuItem.Text = "Shadow 0.&50";
+			this.shadow050ToolStripMenuItem.Click += new System.EventHandler(this.shadow050ToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -174,13 +210,14 @@
 			this.listView1.AllowDrop = true;
 			this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listView1.LabelEdit = true;
-			this.listView1.LargeImageList = this.imageList1;
 			this.listView1.Location = new System.Drawing.Point(0, 24);
 			this.listView1.MultiSelect = false;
 			this.listView1.Name = "listView1";
 			this.listView1.Size = new System.Drawing.Size(284, 238);
+			this.listView1.SmallImageList = this.imageList1;
 			this.listView1.TabIndex = 1;
 			this.listView1.UseCompatibleStateImageBehavior = false;
+			this.listView1.View = System.Windows.Forms.View.List;
 			this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
 			this.listView1.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_BeforeLabelEdit);
 			this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
@@ -192,15 +229,8 @@
 			// imageList1
 			// 
 			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(32, 32);
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
 			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// shadowModeToolStripMenuItem
-			// 
-			this.shadowModeToolStripMenuItem.CheckOnClick = true;
-			this.shadowModeToolStripMenuItem.Name = "shadowModeToolStripMenuItem";
-			this.shadowModeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.shadowModeToolStripMenuItem.Text = "S&hadow Mode";
 			// 
 			// MainForm
 			// 
@@ -239,8 +269,11 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem shadowModeToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem heroesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem shadow060ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem shadow050ToolStripMenuItem;
     }
 }
 
