@@ -35,7 +35,9 @@ namespace HeroesONELib
         public List<File> Files { get; set; }
 
         const int HeroesMagic = 0x1400FFFF;
-		const int Shadow060Magic = 0x1C020037;
+        const int HeroesE3Magic = 0x1005FFFF;
+        const int HeroesPreE3Magic = 0x1003FFFF;
+        const int Shadow060Magic = 0x1C020037;
 		const int Shadow050Magic = 0x1C020020;
 
         public HeroesONEFile()
@@ -53,26 +55,10 @@ namespace HeroesONELib
 				int filesize = reader.ReadInt32() + 0xC;
 				switch (reader.ReadInt32())
 				{
-					case HeroesMagic:
-						{
-							stream.Seek(4, SeekOrigin.Current);
-							long fnlength = reader.ReadInt32();
-							stream.Seek(4, SeekOrigin.Current);
-							List<string> filenames = new List<string>((int)(fnlength / 64));
-							fnlength += stream.Position;
-							while (stream.Position < fnlength)
-								filenames.Add(reader.ReadString(64));
-							stream.Seek(fnlength, SeekOrigin.Begin);
-							while (stream.Position < filesize)
-							{
-								int fn = reader.ReadInt32();
-								int sz = reader.ReadInt32();
-								stream.Seek(4, SeekOrigin.Current);
-								Files.Add(new File(filenames[fn], Prs.Decompress(reader.ReadBytes(sz))));
-							}
-						}
-						break;
-					case Shadow060Magic:
+					case HeroesMagic: { DoHeroesMagic(stream, reader, filesize,1); } break;
+                    case HeroesE3Magic: { DoHeroesMagic(stream, reader, filesize,2); } break;
+                    case HeroesPreE3Magic: { DoHeroesMagic(stream, reader, filesize,3); } break;
+                    case Shadow060Magic:
 					case Shadow050Magic:
 						{
 							switch (reader.ReadString(12))
@@ -84,33 +70,56 @@ namespace HeroesONELib
 									Type = ArchiveType.Shadow050;
 									break;
 							}
-							if (Type == ArchiveType.Heroes) goto default;
-							stream.Seek(4, SeekOrigin.Current);
-							int fnum = reader.ReadInt32();
-							stream.Seek(0x90, SeekOrigin.Current);
-							List<string> filenames = new List<string>(fnum);
-							List<int> fileaddrs = new List<int>(fnum);
-							for (int i = 0; i < fnum; i++)
-							{
-								filenames.Add(reader.ReadString(Type == ArchiveType.Shadow060 ? 0x2C : 0x20));
-								stream.Seek(4, SeekOrigin.Current);
-								fileaddrs.Add(reader.ReadInt32());
-								stream.Seek(4, SeekOrigin.Current);
-								if (Type == ArchiveType.Shadow050)
-									stream.Seek(0xC, SeekOrigin.Current);
-							}
-							fileaddrs.Add(filesize);
-							for (int i = 0; i < fnum; i++)
-							{
-								stream.Seek(fileaddrs[i] + 0xC, SeekOrigin.Begin);
-								Files.Add(new File(filenames[i], Prs.Decompress(reader.ReadBytes(fileaddrs[i + 1] - fileaddrs[i]))));
-							}
+					if (Type == ArchiveType.Heroes || Type == ArchiveType.HeroesE3  || Type == ArchiveType.HeroesPreE3) goto default;
+					stream.Seek(4, SeekOrigin.Current);
+					int fnum = reader.ReadInt32();
+					stream.Seek(0x90, SeekOrigin.Current);
+					List<string> filenames = new List<string>(fnum);
+					List<int> fileaddrs = new List<int>(fnum);
+					for (int i = 0; i < fnum; i++)
+					{
+						filenames.Add(reader.ReadString(Type == ArchiveType.Shadow060 ? 0x2C : 0x20));
+						stream.Seek(4, SeekOrigin.Current);
+						fileaddrs.Add(reader.ReadInt32());
+						stream.Seek(4, SeekOrigin.Current);
+						if (Type == ArchiveType.Shadow050)
+							stream.Seek(0xC, SeekOrigin.Current);
+					    }
+					    fileaddrs.Add(filesize);
+						for (int i = 0; i < fnum; i++)
+						{
+							stream.Seek(fileaddrs[i] + 0xC, SeekOrigin.Begin);
+							Files.Add(new File(filenames[i], Prs.Decompress(reader.ReadBytes(fileaddrs[i + 1] - fileaddrs[i]))));
 						}
-						break;
-					default:
-						throw new Exception("Error: Unknown archive type");
+					}
+					break;
+				default:
+					throw new Exception("Error: Unknown archive type");
 				}
 			}
+        }
+
+        // Copy of case HeroesMagic to avoid redundant code when E3 version is chosen. .ONE format seems to always be the same, just different headers.
+        public void DoHeroesMagic(FileStream stream, BinaryReader reader, int filesize, int HeroesType)
+        {
+            if (HeroesType == 1) { Type = ArchiveType.Heroes;  } // Final
+            else if (HeroesType == 2) { Type = ArchiveType.HeroesE3; } // E3
+            else if (HeroesType == 3) { Type = ArchiveType.HeroesPreE3; } // Pre-E3
+            stream.Seek(4, SeekOrigin.Current);
+            long fnlength = reader.ReadInt32();
+            stream.Seek(4, SeekOrigin.Current);
+            List<string> filenames = new List<string>((int)(fnlength / 64));
+            fnlength += stream.Position;
+            while (stream.Position < fnlength)
+                filenames.Add(reader.ReadString(64));
+            stream.Seek(fnlength, SeekOrigin.Begin);
+            while (stream.Position < filesize)
+            {
+                int fn = reader.ReadInt32();
+                int sz = reader.ReadInt32();
+                stream.Seek(4, SeekOrigin.Current);
+                Files.Add(new File(filenames[fn], Prs.Decompress(reader.ReadBytes(sz))));
+            }
         }
 
         public void Save(string filename, ArchiveType type)
@@ -121,14 +130,18 @@ namespace HeroesONELib
                 writer.Write(0);
                 long fspos = stream.Position;
                 writer.Write(-1);
-				if (type == ArchiveType.Heroes)
+				if (type == ArchiveType.Heroes || type == ArchiveType.HeroesE3 || type == ArchiveType.HeroesPreE3)
 				{
 					byte[] filenames = new byte[256 * 64];
-					writer.Write(HeroesMagic);
-					writer.Write(1);
+                    if (type == ArchiveType.Heroes) { writer.Write(HeroesMagic); }
+                    else if (type == ArchiveType.HeroesE3) { writer.Write(HeroesE3Magic); }
+                    else if (type == ArchiveType.HeroesPreE3) { writer.Write(HeroesPreE3Magic); }
+                    writer.Write(1);
 					writer.Write(filenames.Length);
-					writer.Write(HeroesMagic);
-					long fnpos = stream.Position;
+                    if (type == ArchiveType.Heroes) { writer.Write(HeroesMagic); }
+                    else if (type == ArchiveType.HeroesE3) { writer.Write(HeroesE3Magic); }
+                    else if (type == ArchiveType.HeroesPreE3) { writer.Write(HeroesPreE3Magic); }
+                    long fnpos = stream.Position;
 					writer.Write(filenames);
 					int i = 2;
 					foreach (File item in Files)
@@ -136,14 +149,16 @@ namespace HeroesONELib
 						byte[] data = Prs.Compress(item.Data);
 						writer.Write(i++);
 						writer.Write(data.Length);
-						writer.Write(HeroesMagic);
-						writer.Write(data);
+                        if (type == ArchiveType.Heroes) { writer.Write(HeroesMagic); }
+                        else if (type == ArchiveType.HeroesE3) { writer.Write(HeroesE3Magic); }
+                        else if (type == ArchiveType.HeroesPreE3) { writer.Write(HeroesPreE3Magic); }
+                        writer.Write(data);
 						System.Text.Encoding.ASCII.GetBytes(item.Name).CopyTo(filenames, (i - 1) * 64);
 					}
 					stream.Seek(fnpos, SeekOrigin.Begin);
 					writer.Write(filenames);
 				}
-				else
+                else
 				{
 					writer.Write(type == ArchiveType.Shadow060 ? Shadow060Magic : Shadow050Magic);
 					writer.Write(type == ArchiveType.Shadow060 ? "One Ver 0.60" : "One Ver 0.50", 12);
@@ -182,7 +197,9 @@ namespace HeroesONELib
 	{
 		Heroes,
 		Shadow060,
-		Shadow050
+		Shadow050,
+        HeroesE3,
+        HeroesPreE3
 	}
 
 	public static class Extensions
