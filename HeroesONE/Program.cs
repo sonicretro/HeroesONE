@@ -11,8 +11,10 @@ namespace HeroesONE
 							 new LongOpt("pack", Argument.No, null, 'p'),
 							 new LongOpt("unpack", Argument.No, null, 'u'),
 							 new LongOpt("shadow060", Argument.No, null, '6'),
-							 new LongOpt("shadow050", Argument.No, null, '5')
-						 };
+							 new LongOpt("shadow050", Argument.No, null, '5'),
+                             new LongOpt("heroesE3", Argument.No, null, 'e'),
+                             new LongOpt("heroesPreE3", Argument.No, null, '0'),
+                         };
 
         /// <summary>
         /// The main entry point for the application.
@@ -42,7 +44,13 @@ namespace HeroesONE
 					case '5':
 						type = ArchiveType.Shadow050;
 						break;
-				}
+                    case 'e':
+                        type = ArchiveType.HeroesE3;
+                        break;
+                    case '0':
+                        type = ArchiveType.HeroesPreE3;
+                        break;
+                }
 				opt = getopt.getopt();
 			}
 			if (mode == null || getopt.Optind + (mode == Mode.Unpack ? 0 : 1) >= args.Length)
