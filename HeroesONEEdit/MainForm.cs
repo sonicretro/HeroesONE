@@ -52,7 +52,13 @@ namespace HeroesONEEdit
 				case ArchiveType.Shadow050:
 					shadow050ToolStripMenuItem_Click(this, EventArgs.Empty);
 					break;
-			}
+                case ArchiveType.HeroesE3:
+                    heroesE3ToolStripMenuItem_Click(this, EventArgs.Empty);
+                    break;
+                case ArchiveType.HeroesPreE3:
+                    heroesPreE3ToolStripMenuItem_Click(this, EventArgs.Empty);
+                    break;
+            }
             this.filename = filename;
             listView1.Items.Clear();
             imageList1.Images.Clear();
@@ -81,7 +87,7 @@ namespace HeroesONEEdit
             if (string.IsNullOrEmpty(filename))
                 saveAsToolStripMenuItem_Click(sender, e);
             else
-                file.Save(filename, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
+                file.Save(filename, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : heroesE3ToolStripMenuItem.Checked ? ArchiveType.HeroesE3 : heroesPreE3ToolStripMenuItem.Checked ? ArchiveType.HeroesPreE3 : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -89,7 +95,7 @@ namespace HeroesONEEdit
             using (SaveFileDialog a = new SaveFileDialog() { Filter = "ONE Files|*.one|All Files|*.*" })
                 if (a.ShowDialog() == DialogResult.OK)
                 {
-					file.Save(a.FileName, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
+					file.Save(a.FileName, heroesToolStripMenuItem.Checked ? ArchiveType.Heroes : heroesE3ToolStripMenuItem.Checked ? ArchiveType.HeroesE3 : heroesPreE3ToolStripMenuItem.Checked ? ArchiveType.HeroesPreE3 : shadow060ToolStripMenuItem.Checked ? ArchiveType.Shadow060 : ArchiveType.Shadow050);
                     this.filename = a.FileName;
                 }
         }
@@ -323,19 +329,31 @@ namespace HeroesONEEdit
 		private void heroesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			heroesToolStripMenuItem.Checked = true;
-			shadow050ToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = false;
+			shadow050ToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = heroesE3ToolStripMenuItem.Checked = heroesPreE3ToolStripMenuItem.Checked = false;
 		}
 
 		private void shadow060ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			shadow060ToolStripMenuItem.Checked = true;
-			heroesToolStripMenuItem.Checked = shadow050ToolStripMenuItem.Checked = false;
+			heroesToolStripMenuItem.Checked = shadow050ToolStripMenuItem.Checked = heroesE3ToolStripMenuItem.Checked = heroesPreE3ToolStripMenuItem.Checked = false;
 		}
 
 		private void shadow050ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			shadow050ToolStripMenuItem.Checked = true;
-			heroesToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = false;
+			heroesToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = heroesE3ToolStripMenuItem.Checked = heroesPreE3ToolStripMenuItem.Checked = false;
 		}
+
+        private void heroesE3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            heroesE3ToolStripMenuItem.Checked = true;
+            shadow050ToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = heroesToolStripMenuItem.Checked = heroesPreE3ToolStripMenuItem.Checked = false;
+        }
+
+        private void heroesPreE3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            heroesPreE3ToolStripMenuItem.Checked = true;
+            shadow050ToolStripMenuItem.Checked = shadow060ToolStripMenuItem.Checked = heroesToolStripMenuItem.Checked = heroesE3ToolStripMenuItem.Checked = false;
+        }
     }
 }

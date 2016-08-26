@@ -8,3 +8,13 @@ Arguments:
                                     Hedgehog" 0.60 format.
 -5, --shadow050                     Packs the archive with the "Shadow the
                                     Hedgehog" 0.50 format.
+-e, --heroesE3                      Packs the archive with the "Sonic Heroes
+                                    E3 Beta" headers to support the prototype.
+-0, --heroesPreE3                   Packs the archive with the "Sonic Heroes
+                                    'Alpha'" headers to support prototypes 
+									earlier than the E3 release.
+
+*Note: -0 is based on a found archive in the E3 prototype, it is untested 
+       as we do not have a prototype as aged as the specified archive. It
+	   is included as the format did not have seemed to change and as such
+	   it should work.
